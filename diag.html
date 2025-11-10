@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>通信診断（GAS /exec）</title>
+<style>
+  body{font-family:system-ui,-apple-system,Roboto;line-height:1.6;padding:24px;max-width:900px;margin:auto}
+  input,button,textarea{font:inherit}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  pre{background:#f6f8fa;padding:12px;border-radius:8px;overflow:auto;max-height:50vh}
+  .ok{color:#0a7a00}.ng{color:#b00020}
+</style>
+</head>
+<body>
+<h1>通信診断（GitHub Pages → GAS /exec）</h1>
+
+<div class="row">
+  <label>ENDPOINT（GAS /exec のURL）:
+    <input id="endpoint" type="url" placeholder="https://script.google.com/macros/s/xxxx/exec" size="60" required>
+  </label>
+  <button id="save">保存</button>
+</div>
+
+<div class="row">
+  <button id="testGet">① GET /ping を試す</button>
+  <button id="testPost">② POST(FormData) を試す</button>
+  <button id="clear">結果クリア</button>
+</div>
+
+<h2>結果</h2>
+<pre id="out"></pre>
+
+<script>
+const $ = (id)=>document.getElementById(id);
+const log = (msg)=>{ $('out').textContent += msg + '\n'; };
+const set = (k,v)=>localStorage.setItem(k,v);
+const get = (k)=>localStorage.getItem(k)||'';
+
+(function init(){
+  const saved = get('diag_endpoint');
+  if(saved) $('endpoint').value = saved;
+})();
+
+$('save').addEventListener('click', ()=>{ set('diag_endpoint',$('endpoint').value.trim()); log('✔ ENDPOINT 保存: '+$('endpoint').value.trim()); });
+
+$('clear').addEventListener('click', ()=>{ $('out').textContent=''; });
+
+$('testGet').addEventListener('click', async ()=>{
+  const ENDPOINT = $('endpoint').value.trim();
+  if(!ENDPOINT){ alert('ENDPOINT を入力してください'); return; }
+  $('out').textContent='';
+  log('--- GET /ping を開始 ---');
+  try{
+    const url = ENDPOINT + (ENDPOINT.includes('?')?'&':'?') + 'ping=1';
+    log('GET '+url);
+    const res = await fetch(url, { method:'GET', cache:'no-store', redirect:'follow', referrerPolicy:'no-referrer' });
+    log('status: '+res.status+' '+res.statusText);
+    log('type: '+res.type+' | redirected:'+res.redirected+' | url:'+res.url);
+    const text = await res.text();
+    log('body:\n'+text);
+    try{ const js = JSON.parse(text); log('JSON parse OK: '+JSON.stringify(js)); }catch(_){ log('JSON parse: NG（テキストとして受信）'); }
+    log('--- GET /ping 終了 ---');
+  }catch(err){
+    log('✖ Failed to fetch: '+String(err));
+  }
+});
+
+$('testPost').addEventListener('click', async ()=>{
+  const ENDPOINT = $('endpoint').value.trim();
+  if(!ENDPOINT){ alert('ENDPOINT を入力してください'); return; }
+  log('--- POST(FormData) を開始 ---');
+  try{
+    const fd = new FormData();
+    // 最小限の項目（サーバ側バリデーションに合わせる）
+    fd.append('q1_gender','不明');
+    fd.append('q2_age','30代');
+    fd.append('q3_zip','1760001'); // 7桁
+    fd.append('q4_years','1年未満');
+    fd.append('q5_source','gak');
+    fd.append('q6_firstStores','gak');     // 同名キーは複数可だが1つでOK
+    fd.append('q7_futureStores','なかった');
+    fd.append('q8_free','(diag)');
+
+    const res = await fetch(ENDPOINT, { method:'POST', body: fd, cache:'no-store', redirect:'follow', referrerPolicy:'no-referrer' });
+    log('status: '+res.status+' '+res.statusText);
+    log('type: '+res.type+' | redirected:'+res.redirected+' | url:'+res.url);
+    const text = await res.text();
+    log('body:\n'+text);
+    try{ const js = JSON.parse(text); log('JSON parse OK: '+JSON.stringify(js)); }catch(_){ log('JSON parse: NG（テキストとして受信）'); }
+    log('--- POST 終了 ---');
+  }catch(err){
+    log('✖ Failed to fetch: '+String(err));
+  }
+});
+</script>
+</body>
+</html>
