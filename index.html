@@ -7,7 +7,7 @@
 <style>
   :root{
     --bg:#f7f8fb; --card:#fff; --text:#222; --muted:#6b7280;
-    --brand:#2563eb; --brand-weak:#e8f0ff; --line:#e5e7eb; --alert:#eef5ff; --alert-line:#cfe0ff;
+    --brand:#2563eb; --line:#e5e7eb; --alert:#eef5ff; --alert-line:#cfe0ff;
   }
   html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",Meiryo,Roboto,Segoe UI,sans-serif;line-height:1.7}
   .container{max-width:980px;margin:24px auto;padding:0 16px}
@@ -23,21 +23,12 @@
   button{appearance:none;border:0;border-radius:9px;background:var(--brand);color:#fff;padding:10px 16px;font-weight:700;cursor:pointer}
   button[disabled]{opacity:.6;cursor:not-allowed}
   .btn-secondary{background:#6b7280}
-  /* 選択肢UI（読みやすく） */
-  .grid{
-    display:grid;gap:8px;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  }
-  .pill{
-    display:flex;align-items:center;gap:.5em;
-    border:1px solid var(--line);border-radius:10px;background:#fafafa;padding:8px 10px;cursor:pointer;
-    transition:background .15s,border-color .15s,transform .04s;
-  }
+  /* 視認性の高い選択肢UI */
+  .grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .pill{display:flex;align-items:center;gap:.5em;border:1px solid var(--line);border-radius:10px;background:#fafafa;padding:8px 10px;cursor:pointer;transition:background .15s,border-color .15s}
   .pill:hover{background:#f5f7ff;border-color:#d8ddff}
   .pill input{transform:scale(1.1)}
-  .box{
-    border:1px solid var(--line);border-radius:10px;background:#fcfcfd;padding:10px;max-height:340px;overflow:auto;
-  }
+  .box{border:1px solid var(--line);border-radius:10px;background:#fcfcfd;padding:10px;max-height:340px;overflow:auto}
   .muted{opacity:.5}
   .hide{display:none!important}
 </style>
@@ -47,7 +38,7 @@
   <div class="card">
     <h1>としまえんあたりのスタンプラリーご参加後アンケート</h1>
 
-    <!-- ====== 入力画面 ====== -->
+    <!-- 入力画面 -->
     <div id="formView">
       <form id="surveyForm" novalidate>
         <!-- Q1 -->
@@ -96,7 +87,7 @@
           </div>
         </fieldset>
 
-        <!-- Q5 周知経路（ご指定の店舗一覧・単一選択） -->
+        <!-- Q5 周知経路（単一選択：店舗・施設一覧 + その他） -->
         <fieldset>
           <h2 class="required">Q5：本スタンプラリー施策をどちらで知りましたか？</h2>
           <div id="q5_group" class="grid"></div>
@@ -104,21 +95,21 @@
           <div class="help">ひとつ選んでください。</div>
         </fieldset>
 
-        <!-- Q6 初めて行った店舗 -->
+        <!-- Q6（複数／「なかった」排他） -->
         <fieldset>
           <h2 class="required">Q6：本スタンプラリー施策を機にはじめて行った店舗はありましたか？</h2>
           <div id="q6_group" class="box grid"></div>
           <div class="help">「なかった」を選ぶと他は自動で無効になります。</div>
         </fieldset>
 
-        <!-- Q7 今後通いたい店舗 -->
+        <!-- Q7（複数／「なかった」排他） -->
         <fieldset>
           <h2 class="required">Q7：本スタンプラリー施策を機に今後通いたい店舗はありましたか？</h2>
           <div id="q7_group" class="box grid"></div>
           <div class="help">「なかった」を選ぶと他は自動で無効になります。</div>
         </fieldset>
 
-        <!-- Q8 自由記述 -->
+        <!-- Q8 任意 -->
         <fieldset>
           <h2>Q8：今後行われたら参加したい地域施策・イベントがあれば教えて下さい（任意）</h2>
           <textarea name="q8_free" rows="5" placeholder="自由記述"></textarea>
@@ -134,7 +125,7 @@
       <div class="alert">※ 送信後、完了画面に回答番号が表示されます。</div>
     </div>
 
-    <!-- ====== 完了画面 ====== -->
+    <!-- 完了画面 -->
     <div id="thanksView" class="hide">
       <h2>ご回答ありがとうございました！</h2>
       <div class="alert">あなたは <b id="respNum">—</b> 番目の回答者です。</div>
@@ -144,12 +135,14 @@
 </div>
 
 <script>
-/** ▼▼ ここをあなたの“googleusercontent の最終URL”に差し替え ▼▼ **/
-const ENDPOINT='https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLi1TrQLUpsBR09DVv5rlJtKSVqxugtQ-B5VQcPxghKF19s0uEHVMwD1jF_LKnop8fN3iBeohaCs1zepuAb0jR9CiOEXTue_GQl10mzgi75dwSdaBcyoUHYPwOBi8oDe9i9PSyRUY1rEmZWB4Rnxw0OvCbCEUk30jiHNw8b-sPjXizU9xr_GUBdQstQqY-SOwexp_dZDvNIzNGE8QTRMSRBbJp-jgVZMFpxACwJe-6HkfubV2fedcZMlKYnQOsoTbBn13mLkzFGuBDnuWLk9Aju_QckjdJlhK7sslw1Lw85D9jMTENU&lib=MyZphAQ8ILK4SXivHuEv2PojldFBKTi0l';
-/** ▲▲ 差し替え ▲▲ **/
+// ★ここを「googleusercontent の最終URL」に置換（例： https://script.googleusercontent.com/macros/echo?user_content_key=...&lib=... ）
+const ENDPOINT = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLi42Hv_W0pYRTwYBk52LlDrHiptRMN9aaXSVzKTJjMwwE7zt7dWcqlMXWgOSUKNkpbJIjNaN0i-9p43vLZBOsmUL9--P6y8E80H1Ap-519XFTJ3M5lfvlaJwyNUYFKG1PeFgomMs7deW_u-1GyWH5pM8A9v-NW7180SSLPVIoSzy_LfMxcY8FUVIORjZbg-MAtmB97_-UCIDSeAKY0Z33-J1T8k16wHZqCVkJcYNX0sp-aguevERnZ-6Lm8i0SAYZSHgqncLtXP238kmHuWQq1gzvHdfT7L5ReYCjbkZhih-9ciVeE&lib=MyZphAQ8ILK4SXivHuEv2PojldFBKTi0l';
 
-// ご指定の店舗一覧（Q5/6/7 共通）
-const SHOPS = [
+/** 店舗リスト
+ *  Q5 … ご指定の全店舗 + 「その他店舗・施設」
+ *  Q6/Q7 … ご指定の全店舗（※「その他店舗・施設」は含めない）+ 「なかった」
+ */
+const SHOPS_BASE = [
   'gak','瀬戸田レモンと肉巻き野菜串 NERIMARU','木の実植物店','食堂まほろ','シリウスラボ',
   'セブンイレブン春日町5丁目店','コンビニエンスストア髙橋','わだぱん','佃宝 本店','志村電機珈琲焙煎所',
   '手打ちそばと酒肴 いちだい','練馬城址公園','Bis','トシママンガスタンド','スタジオツアー東京',
@@ -157,14 +150,20 @@ const SHOPS = [
   '日本酒処 はち屋','笑天やきとり 一輝','練馬区立 向山庭園','タッポスト チャオラ','夢民家',
   '兄弟チキン','亀寿司','BBQ Records','カーサ・デル・ヴィアッジアトーレ','豊島園の夕陽',
   '111','THE GIANT STEP','アーバンオアシス タナカ','デュアン漢方薬局','かすたねっと',
-  '口水食堂','猫カフェ えこねこ','metro dinner.','その他店舗・施設'
+  '口水食堂','猫カフェ えこねこ','metro dinner.'
 ];
+const SHOPS_Q5 = [...SHOPS_BASE, 'その他店舗・施設'];     // 単一
+const SHOPS_Q6Q7 = [...SHOPS_BASE, 'なかった'];           // 複数（※「その他」は入れない）
 
-// Q5: 単一選択（ラジオ） → hidden へ反映
+function makeId(prefix, name){
+  return prefix + '_' + btoa(unescape(encodeURIComponent(name))).replace(/=+$/,'');
+}
+
+// Q5（単一） → hiddenへ反映
 (function renderQ5(){
   const wrap=document.getElementById('q5_group');
-  SHOPS.forEach(name=>{
-    const id='q5_'+btoa(unescape(encodeURIComponent(name))).replace(/=+$/,'');
+  SHOPS_Q5.forEach(name=>{
+    const id=makeId('q5',name);
     const ip=document.createElement('input'); ip.type='radio'; ip.name='q5_source_r'; ip.value=name; ip.id=id; ip.required=true;
     ip.addEventListener('change',()=>document.getElementById('q5_source').value=name);
     const lbl=document.createElement('label'); lbl.className='pill'; lbl.setAttribute('for',id);
@@ -173,82 +172,68 @@ const SHOPS = [
   });
 })();
 
-// Q6/Q7: 複数選択 + 「なかった」排他
+// Q6/Q7（複数 + 「なかった」排他）
 function renderCheckGroup(groupId){
   const wrap=document.getElementById(groupId);
-  [...SHOPS,'なかった'].forEach(name=>{
-    const id=groupId+'_'+btoa(unescape(encodeURIComponent(name))).replace(/=+$/,'');
+  SHOPS_Q6Q7.forEach(name=>{
+    const id=makeId(groupId,name);
     const ip=document.createElement('input'); ip.type='checkbox'; ip.value=name; ip.id=id;
     if(name==='なかった') ip.dataset.none='1';
     const lbl=document.createElement('label'); lbl.className='pill'; lbl.setAttribute('for',id);
     lbl.append(ip, document.createTextNode(' '+name));
     wrap.append(lbl);
   });
-  // 排他制御（視覚的にグレーアウト）
+  // 排他 & 視覚グレーアウト
   wrap.addEventListener('change',()=>{
     const checks=[...wrap.querySelectorAll('input[type=checkbox]')];
     const none=checks.find(c=>c.dataset.none==='1');
     const items=checks.filter(c=>c.dataset.none!=='1');
     if(none && none.checked){
-      items.forEach(c=>{c.checked=false;c.disabled=true;c.parentElement.classList.add('muted');});
+      items.forEach(c=>{ c.checked=false; c.disabled=true; c.parentElement.classList.add('muted'); });
     }else{
-      items.forEach(c=>{c.disabled=false;c.parentElement.classList.remove('muted');});
+      items.forEach(c=>{ c.disabled=false; c.parentElement.classList.remove('muted'); });
     }
   });
 }
 renderCheckGroup('q6_group');
 renderCheckGroup('q7_group');
 
-// 郵便番号：7桁で打ち止め
+// 郵便番号：7桁で自動打ち止め
 document.getElementById('zip').addEventListener('input',e=>{
-  e.target.value=e.target.value.replace(/\D/g,'').slice(0,7);
+  e.target.value = e.target.value.replace(/\D/g,'').slice(0,7);
 });
 
-// ==== 送信（GET方式：CORSプリフライト回避） ====
-document.getElementById('surveyForm').addEventListener('submit', async ev=>{
+// === 送信：画面遷移（CORS完全回避） ===
+document.getElementById('surveyForm').addEventListener('submit', (ev)=>{
   ev.preventDefault(); setError('');
-  const f=new FormData(ev.target);
 
-  // Q5 hidden へ反映済みか確認
-  const src=document.getElementById('q5_source').value;
+  const f = new FormData(ev.target);
+  const src = document.getElementById('q5_source').value;
   if(!src) return setError('Q5 を選択してください');
 
-  // Q6/Q7 値収集（「なかった」優先）
-  const q6=collectMulti('q6_group');
-  const q7=collectMulti('q7_group');
+  const q6 = collectMulti('q6_group');
+  const q7 = collectMulti('q7_group');
   if(q6.length===0) return setError('Q6 を選択してください');
   if(q7.length===0) return setError('Q7 を選択してください');
-
   if(!/^\d{7}$/.test(String(f.get('q3_zip')||''))) return setError('郵便番号は半角7桁で入力してください');
 
-  const params=new URLSearchParams();
+  const params = new URLSearchParams();
   params.set('action','submit');
-  params.set('q1_gender',String(f.get('q1_gender')||''));
-  params.set('q2_age',   String(f.get('q2_age')||''));
-  params.set('q3_zip',   String(f.get('q3_zip')||''));
-  params.set('q4_years', String(f.get('q4_years')||''));
-  params.set('q5_source',src);
+  params.set('q1_gender', String(f.get('q1_gender')||''));
+  params.set('q2_age',    String(f.get('q2_age')||''));
+  params.set('q3_zip',    String(f.get('q3_zip')||''));
+  params.set('q4_years',  String(f.get('q4_years')||''));
+  params.set('q5_source', src);
   params.set('q6_firstStores', q6.join('|'));
   params.set('q7_futureStores', q7.join('|'));
-  params.set('q8_free', String(f.get('q8_free')||''));
+  params.set('q8_free',  String(f.get('q8_free')||''));
+
+  // ★ ここがポイント：サーバに「戻り先URL」を渡し、サーバ側で?n=xx を付けてリダイレクト
+  params.set('redirect', encodeURIComponent(location.origin + location.pathname));
 
   const url = ENDPOINT + (ENDPOINT.includes('?')?'&':'?') + params.toString();
-  const btn=document.getElementById('submitBtn'); btn.disabled=true;
-
-  try{
-    const res=await fetch(url,{method:'GET',cache:'no-store',redirect:'follow'});
-    const txt=await res.text();
-    let js={}; try{ js=JSON.parse(txt); }catch(_){}
-    if(!js.ok || typeof js.number!=='number'){ throw new Error('送信エラー'); }
-    sessionStorage.setItem('lastNumber', String(js.number));
-    showThanks(js.number);
-    history.replaceState(null,'', location.pathname + '?n=' + encodeURIComponent(js.number));
-  }catch(e){
-    setError('通信エラー：' + e.message);
-    console.error(e);
-  }finally{
-    btn.disabled=false;
-  }
+  // 画面遷移で送信（CORS無関係）
+  location.href = url;
 });
 
 function collectMulti(groupId){
@@ -259,13 +244,17 @@ function collectMulti(groupId){
   return checks.filter(c=>c.checked && c.dataset.none!=='1').map(c=>c.value);
 }
 
-function setError(msg){ document.getElementById('err').textContent=msg||''; }
+function setError(msg){ document.getElementById('err').textContent = msg || ''; }
 
-function showThanks(n){
-  document.getElementById('respNum').textContent=String(n);
-  document.getElementById('formView').classList.add('hide');
-  document.getElementById('thanksView').classList.remove('hide');
-}
+// ページ再読込（リダイレクト後）：?n=xx があれば完了画面を表示
+(function onLoadThanks(){
+  const n = new URL(location.href).searchParams.get('n');
+  if(n && /^\d+$/.test(n)){
+    document.getElementById('respNum').textContent = n;
+    document.getElementById('formView').classList.add('hide');
+    document.getElementById('thanksView').classList.remove('hide');
+  }
+})();
 
 function closeWindow(){
   try{ window.close(); }catch(_){}
